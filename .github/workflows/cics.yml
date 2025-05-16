@@ -1,3 +1,4 @@
+#  Find a link with an href attribute containing "about" and click it
 on: [push]
 jobs:
   buid-and-test:
