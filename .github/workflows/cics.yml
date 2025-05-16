@@ -1,28 +1,30 @@
-#  Find a link with an href attribute containing "about" and click it
 on: [push]
 jobs:
-  buid-and-test:
-    run-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - uses: action/checkout@v4
+      - uses: actions/checkout@v4
       - run: npm clean-install
-      - run: npm run bluid
-      - name: Save cache (ode_modules)
-        uses: action/checkout@v4
+      - run: npm run build
+      - name: Save cache (node_modules)
+        uses: actions/cache/save@v4
         with:
           path: |
             node_modules
-          key: ${{runner.os}}--node_modules-${{hashFiles('**/package-lock.json')}}
+            /home/runner/.cache/Cypress
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
 
   test:
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs:
-      -build
+      - build
     steps:
-      - uses: action/checkout@v4
-      - name: Save cache (ode_modules)
-        uses: action/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Restore cache (node_modules)
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
-          key: ${{runner.os}}--node_modules-${{hashFiles('**/package-lock.json')}}
+            /home/runner/.cache/Cypress
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
+      - run: npm run e2e:headless
