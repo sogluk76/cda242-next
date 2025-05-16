@@ -1,0 +1,9 @@
+on: [push]
+jobs:
+  buid-and-test:
+    run-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v4
+      - run: npm clean-install
+      - run: npm run bluid
+      - run: npm run e2e:headless
